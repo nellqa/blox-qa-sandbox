@@ -1,0 +1,768 @@
+{
+  "info": {
+    "_postman_id": "c44863c5-ce54-4c6f-a0a0-ef745f741a70",
+    "name": "SCENARIOS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Helpers",
+      "item": [
+        {
+          "name": "https://blox.eu.auth0.com/oauth/token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "c9510f42-191a-479c-b1cd-e689b5d60ef6",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.environment.set(\"token\", jsonData.access_token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "6157cc46-a1f5-42f9-8a65-5bbdb41d6328",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "content-type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"client_id\": \"{{client_id}}\",\n\t\"client_secret\": \"{{client_secret}}\",\n\t\"audience\": \"{{audience}}\",\n\t\"grant_type\": \"{{grant_type}}\"\n}"
+            },
+            "url": "https://blox.eu.auth0.com/oauth/token"
+          },
+          "response": []
+        },
+        {
+          "name": "Common",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "b6b3dbe0-b647-48a8-8174-ddaa9daf9aea",
+                "exec": [
+                  "var commonTests = () => {",
+                  "    pm.test(\"Status code is 200\", function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "    ",
+                  "    pm.test(\"Content-Type is present\", function () {",
+                  "        pm.response.to.have.header(\"Content-Type\");",
+                  "    });",
+                  "    ",
+                  "}",
+                  "",
+                  "pm.environment.set(\"commonTests\", commonTests.toString());",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7f049667-e80a-46a7-ae97-eaca74868825",
+                "exec": [
+                  "var commonPrerequest = (input, param) => {",
+                  "    // random generator function",
+                  "        function getRandomInt(min, max) {",
+                  "        min = Math.ceil(min);",
+                  "        max = Math.floor(max);",
+                  "        return Math.floor(Math.random() * (max - min)) + min;",
+                  "        }",
+                  "    // generate the random value",
+                  "    var input = input + getRandomInt(0,100)",
+                  "    // to see it in console",
+                  "    console.log(\"Input value : \" + input)",
+                  "    ",
+                  "    // set the value into the global variable",
+                  "    postman.setEnvironmentVariable(param,input)    ",
+                  "}",
+                  "",
+                  "pm.environment.set(\"commonPrerequest\", commonPrerequest.toString());"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "1d79161d-f49e-499c-8f57-baec5097a1a0",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/portfolios",
+            "description": "Used to store all commonly used code accross all requests as a pre-requisite script; test data; tests; etc."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "2100f745-addf-4338-aca6-5bef20dc5025"
+    },
+    {
+      "name": "Example_Scenario",
+      "item": [
+        {
+          "name": "Create portfolio 1",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c4f9c84c-7caf-4dda-bffb-79565459f5f0",
+                "exec": [
+                  "var new_name = eval(pm.environment.get(\"commonPrerequest\"))(input = \"postman portfolio\", param = \"new_portfolio_name\")",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bd4ad47a-550a-47d3-a603-3f8dbac88a09",
+                "exec": [
+                  "// Check status code and content-type presence",
+                  "eval(pm.environment.get(\"commonTests\"))();",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "// Parse response body and verify if input given matches the response",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "tests['The name given matches the response'] = environment[\"new_portfolio_name\"] == jsonData.result.name;",
+                  "",
+                  "// ADDED BELOW LINES",
+                  "// Store created portfolio name in a variable for use in follow-up requests",
+                  "var portfolio_1 = pm.environment.get(\"new_portfolio_name\"); ",
+                  "pm.environment.set(\"portfolio_1_name\", portfolio_1);",
+                  "pm.environment.set(\"portfolio_1_id\", jsonData.result.portfolioId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "46b13ce3-79b4-445d-84b4-e49f50e50ba8",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"name\": \"{{new_portfolio_name}}\"\n}\n"
+            },
+            "url": "{{base_url}}/portfolios"
+          },
+          "response": []
+        },
+        {
+          "name": "Create portfolio 2",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c4f9c84c-7caf-4dda-bffb-79565459f5f0",
+                "exec": [
+                  "// random generator function",
+                  "        function getRandomInt(min, max) {",
+                  "        min = Math.ceil(min);",
+                  "        max = Math.floor(max);",
+                  "        return Math.floor(Math.random() * (max - min)) + min;",
+                  "        }",
+                  "// generate the random value",
+                  "var input = \"postman portfolio\" + getRandomInt(0,100)",
+                  "// set the value into the global variable",
+                  "postman.setEnvironmentVariable(\"new_portfolio_name\",input)",
+                  "",
+                  "// to see it in console",
+                  "console.log(\"New portfolio 2 name: \" + input)"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bd4ad47a-550a-47d3-a603-3f8dbac88a09",
+                "exec": [
+                  "// Check status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Parse response body and verify if input given matches the response",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "tests['The name given matches the response'] = environment[\"new_portfolio_name\"] == jsonData.result.name;",
+                  "",
+                  "// ADDED BELOW LINES",
+                  "// Store created portfolio name in a variable for use in follow-up requests",
+                  "var portfolio_2 = pm.environment.get(\"new_portfolio_name\"); ",
+                  "pm.environment.set(\"portfolio_2_name\", portfolio_2);",
+                  "pm.environment.set(\"portfolio_2_id\", jsonData.result.portfolioId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "d0c5871f-90ef-4084-b5c3-02c90eb767a6",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"name\": \"{{new_portfolio_name}}\"\n}"
+            },
+            "url": "{{base_url}}/portfolios"
+          },
+          "response": []
+        },
+        {
+          "name": "Create new account 1 in portfolio 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "2261f184-0f7f-4e1d-b00c-f46b49671997",
+                "exec": [
+                  "// Check status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// ADDED BELOW LINES",
+                  "// Parse response body and verify if the response contains accountId, accountName, accountType, creationDateUtc",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.test(\"Response contains accountId, accountName, accountType, creationDateUtc\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"accountId\");",
+                  "    pm.expect(pm.response.text()).to.include(\"accountName\");",
+                  "    pm.expect(pm.response.text()).to.include(\"accountType\");",
+                  "    pm.expect(pm.response.text()).to.include(\"creationDateUtc\");",
+                  "});",
+                  "",
+                  "// Store account 1 id as an env variable",
+                  "pm.environment.set(\"account_1_id\", jsonData.result.accountId);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "4a5b7996-fcb7-4322-8587-963793c6ed8b",
+                "exec": [
+                  "// ADDED THOSE LINES TO ACCESS THE COLLECTION VARIABLES",
+                  "pm.environment.get(\"assetType\");",
+                  "pm.environment.get(\"accountName\");",
+                  "pm.environment.get(\"accountType\");",
+                  "pm.environment.get(\"walletAddress\");",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "2ed8262f-89c8-4829-af5f-abba265dbb4f",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetType\": \"{{assetType}}\",\n  \"account\": {\n    \"accountName\": \"{{accountName}}\",\n    \"accountType\": \"{{accountType}}\"\n  },\n  \"params\": {\n    \"walletAddress\" : \"{{walletAddress}}\",\n    \"ignoreExceedingAccessLevel\": false\n  }\n}\n"
+            },
+            "url": "{{base_url}}/portfolios/{{portfolio_2_id}}/accounts"
+          },
+          "response": []
+        },
+        {
+          "name": "Create new account 2 in portfolio 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "2261f184-0f7f-4e1d-b00c-f46b49671997",
+                "exec": [
+                  "// Check status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// ADDED BELOW LINES",
+                  "// Parse response body and verify if the response contains accountId, accountName, accountType, creationDateUtc",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.test(\"Response contains accountId, accountName, accountType, creationDateUtc\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"accountId\");",
+                  "    pm.expect(pm.response.text()).to.include(\"accountName\");",
+                  "    pm.expect(pm.response.text()).to.include(\"accountType\");",
+                  "    pm.expect(pm.response.text()).to.include(\"creationDateUtc\");",
+                  "});",
+                  "",
+                  "// Store account 1 id as an env variable",
+                  "pm.environment.set(\"account_2_id\", jsonData.result.accountId);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "01d06f06-6f3f-4e6f-83fa-f92dee85b9b6",
+                "exec": [
+                  "// ADDED THOSE LINES TO ACCESS THE COLLECTION VARIABLES",
+                  "pm.environment.get(\"assetType\");",
+                  "pm.environment.get(\"accountName\");",
+                  "pm.environment.get(\"accountType\");",
+                  "pm.environment.get(\"walletAddress\");",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "816c124a-6621-4f84-8ab8-caab7bad59c8",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetType\": \"{{assetType}}\",\n  \"account\": {\n    \"accountName\": \"{{accountName}}\",\n    \"accountType\": \"{{accountType}}\"\n  },\n  \"params\": {\n    \"walletAddress\" : \"{{walletAddress}}\",\n    \"ignoreExceedingAccessLevel\": false\n  }\n}\n"
+            },
+            "url": "{{base_url}}/portfolios/{{portfolio_2_id}}/accounts"
+          },
+          "response": []
+        },
+        {
+          "name": "Update portfolio 1",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "82ca1a92-5757-4930-a2e6-df750cd2d596",
+                "exec": [
+                  "// random generator function",
+                  "        function getRandomInt(min, max) {",
+                  "        min = Math.ceil(min);",
+                  "        max = Math.floor(max);",
+                  "        return Math.floor(Math.random() * (max - min)) + min;",
+                  "        }",
+                  "// generate the random value",
+                  "var input = \"updated portfolio\" + getRandomInt(0,100)",
+                  "// set the value into the global variable",
+                  "postman.setEnvironmentVariable(\"updated_portfolio\",input)",
+                  "",
+                  "// to see it in console",
+                  "console.log(\"New portfolio name: \" + input)"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "894b640f-bebc-444b-a0ac-6d4d0e46a340",
+                "exec": [
+                  "// Check Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Parse response body and verify if input given matches the response",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "tests['The name given matches the response'] = environment[\"updated_portfolio\"] == jsonData.result.name;"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "350095e2-e557-4c94-9b88-55c20279b514",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"{{updated_portfolio}}\"}"
+            },
+            "url": "{{base_url}}/portfolios/{{portfolio_1_id}}",
+            "description": "- pre: output random name value to use as param for the update\n- check if request status code is 200\n- parse response body\n- check if input given matches the response"
+          },
+          "response": []
+        },
+        {
+          "name": "Get account 1 balances",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "c84768f4-8bd9-46b4-b0df-ea73eef3aace",
+                "exec": [
+                  "// Check Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "aeefec23-2eae-43f9-b242-9215b996dee5",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/accounts/{{account_1_id}}/balances"
+          },
+          "response": []
+        },
+        {
+          "name": "Get portfolio 2 balances",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "f455fcdc-0d3c-415d-a8dc-5984d7d1d76f",
+                "exec": [
+                  "// Check Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "180d2254-8ade-4285-b2f8-9b5b153aa40a",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/portfolios/{{portfolio_2_id}}/balances"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete portfolio 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "efa47dcc-4f6e-463b-a85d-d61534a6cd73",
+                "exec": [
+                  "// Check Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "ebf5fc46-c666-4b6e-b369-107dccba3a75",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/portfolios/{{portfolio_1_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete account 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "558aa960-357a-42a4-bc44-4a4cc58715fc",
+                "exec": [
+                  "// Check Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "67611487-86aa-4979-9950-31d43f3fabdd",
+                "exec": [
+                  "// ACCESS THE COLLECTION VARIABLES",
+                  "pm.environment.get(\"account_2_id\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "f0f8a9df-469e-4769-bb29-a0d747141a7a",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": "{{base_url}}/accounts/{{account_2_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get all portfolios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "4d04c945-d2d4-48d5-b8cf-03cd750aeae3",
+                "exec": [
+                  "// Check status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Parse response body and verify deleted portfolio",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "var portfolio_1_id = pm.environment.get(\"portfolio_1_id\")",
+                  "pm.test(\"Validate if response contains variable.\", function () {",
+                  "     pm.expect(pm.response.text()).to.not.include(portfolio_1_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "135306e0-3195-40aa-a77c-3d61682426c7",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/portfolios"
+          },
+          "response": []
+        },
+        {
+          "name": "Get all accounts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "61604739-1d16-4f3a-b1cb-bee1ec82675b",
+                "exec": [
+                  "// Check status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Parse response body and verify deleted accouint",
+                  "var jsonData = JSON.parse(responseBody);",
+                  "var portfolio_2_id = pm.environment.get(\"account_2_id\")",
+                  "pm.test(\"Validate if response contains variable.\", function () {",
+                  "     pm.expect(pm.response.text()).to.not.include(portfolio_2_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "_postman_id": "0c3b5e3b-a95e-4767-bc54-ec5c553cea1d",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/portfolios/{{portfolio_2_id}}/accounts"
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "bec34b66-6b2c-4f63-9294-ba59aec517d0",
+      "auth": {
+        "type": "bearer",
+        "bearer": {
+          "token": "{{token}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "0e08b964-148b-438a-aaca-913583ff32c1",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "d5c1124f-4e22-4fc3-8547-6f3a8c905fc1",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": {
+      "token": "{{token}}"
+    }
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "57842704-87af-4a1a-a5f6-0a65d7102e9d",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "bdfaf24b-cd89-4c0b-9d25-96058621e21e",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "2b2beadd-fba1-40a6-b519-52292a5be36c",
+      "key": "assetType",
+      "value": "ethereum",
+      "type": "string"
+    },
+    {
+      "id": "e47cb2f5-e434-4c49-8aa1-edb664cd7503",
+      "key": "accountName",
+      "value": "ethereum",
+      "type": "string"
+    },
+    {
+      "id": "63d32a47-02d5-43db-9f8c-086710f6029b",
+      "key": "accountType",
+      "value": "ethereum",
+      "type": "string"
+    },
+    {
+      "id": "08cc54a6-d89b-40f7-a0ed-aa27b46243ad",
+      "key": "walletAddress",
+      "value": "0x8E85418695f4f5dF8DE9213A71Ce544BEAa0c0FB",
+      "type": "string"
+    },
+    {
+      "id": "122cfd62-1d22-48bf-a106-c331f71972fc",
+      "key": "client_id",
+      "value": "OpN7rNgxEE0MS4sq87dslHTLOtEFwnAP",
+      "type": "string"
+    },
+    {
+      "id": "cff1589c-de20-434f-ad23-272db1c5dff5",
+      "key": "client_secret",
+      "value": "3UnZ3alp_1TAlOJSPSi_m4Se7b_E_Qo4Q4hgjVmn_jhQUEWF0ePPp4VjVt7GsnNa",
+      "type": "string"
+    },
+    {
+      "id": "25eb99f9-453d-478b-8aef-24503e836d24",
+      "key": "audience",
+      "value": "https://blox.eu.auth0.com/api/v2/",
+      "type": "string"
+    },
+    {
+      "id": "1b11dfa8-0701-4661-afdc-b1c617bfee32",
+      "key": "grant_type",
+      "value": "client_credentials",
+      "type": "string"
+    }
+  ]
+}
