@@ -55,6 +55,8 @@
               "script": {
                 "id": "b6b3dbe0-b647-48a8-8174-ddaa9daf9aea",
                 "exec": [
+                  "// common tests to be used",
+                  "",
                   "var commonTests = () => {",
                   "    pm.test(\"Status code is 200\", function () {",
                   "        pm.response.to.have.status(200);",
@@ -717,49 +719,49 @@
   ],
   "variable": [
     {
-      "id": "2b2beadd-fba1-40a6-b519-52292a5be36c",
+      "id": "136385a5-4cfe-4bf5-a102-544a93e229ca",
       "key": "assetType",
       "value": "ethereum",
       "type": "string"
     },
     {
-      "id": "e47cb2f5-e434-4c49-8aa1-edb664cd7503",
+      "id": "8f32b5a6-65f3-4967-951d-a3aff9cd366b",
       "key": "accountName",
       "value": "ethereum",
       "type": "string"
     },
     {
-      "id": "63d32a47-02d5-43db-9f8c-086710f6029b",
+      "id": "3935571f-d0cc-417f-8d6a-aca532cbab81",
       "key": "accountType",
       "value": "ethereum",
       "type": "string"
     },
     {
-      "id": "08cc54a6-d89b-40f7-a0ed-aa27b46243ad",
+      "id": "9b218841-f94b-48b5-a7a2-c0a8f1a8581f",
       "key": "walletAddress",
       "value": "0x8E85418695f4f5dF8DE9213A71Ce544BEAa0c0FB",
       "type": "string"
     },
     {
-      "id": "122cfd62-1d22-48bf-a106-c331f71972fc",
+      "id": "3850f59f-f0f1-4434-8e2b-118c4fd638f6",
       "key": "client_id",
       "value": "OpN7rNgxEE0MS4sq87dslHTLOtEFwnAP",
       "type": "string"
     },
     {
-      "id": "cff1589c-de20-434f-ad23-272db1c5dff5",
+      "id": "4195c199-611f-4b5f-a43c-9bc27f5923fe",
       "key": "client_secret",
       "value": "3UnZ3alp_1TAlOJSPSi_m4Se7b_E_Qo4Q4hgjVmn_jhQUEWF0ePPp4VjVt7GsnNa",
       "type": "string"
     },
     {
-      "id": "25eb99f9-453d-478b-8aef-24503e836d24",
+      "id": "349e2d0e-b2ee-44a5-9403-c86af1930714",
       "key": "audience",
       "value": "https://blox.eu.auth0.com/api/v2/",
       "type": "string"
     },
     {
-      "id": "1b11dfa8-0701-4661-afdc-b1c617bfee32",
+      "id": "dd7b1370-293d-4960-ba0d-a7a14bcbce01",
       "key": "grant_type",
       "value": "client_credentials",
       "type": "string"
